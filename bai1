@@ -1,0 +1,230 @@
+#include <iostream>
+using namespace std;
+
+const int MAX = 100;
+void swap(int *xp, int *yp) {
+  int temp = *xp;
+  *xp = *yp;
+  *yp = temp;
+}
+
+// 1. S?p x?p ch?n (Selection Sort)
+void SelectionSort(int a[], int n) {
+  for (int i = 0; i < n - 1; ++i) {
+    int min_idx = i;
+    for (int j = i + 1; j < n; ++j) {
+      if (a[j] < a[min_idx]) {
+        min_idx = j;
+      }
+    }
+    swap(a[i], a[min_idx]);
+  }
+}
+
+// 2. S?p x?p chèn (Insertion Sort)
+void InsertionSort(int a[], int n) {
+  for (int i = 1; i < n; ++i) {
+    int key = a[i];
+    int j = i - 1;
+    while (j >= 0 && a[j] > key) {
+      a[j + 1] = a[j];
+      --j;
+    }
+    a[j + 1] = key;
+  }
+}
+
+// 3. S?p x?p n?i b?t (Bubble Sort)
+void BubbleSort(int a[], int n) {
+  for (int i = 0; i < n - 1; ++i) {
+    for (int j = 0; j < n - i - 1; ++j) {
+      if (a[j] > a[j + 1]) {
+        swap(a[j], a[j + 1]);
+      }
+    }
+  }
+}
+
+// 4. S?p x?p nhanh (Quick Sort)
+int Partition(int a[], int p, int r) {
+  int x = a[r];
+  int i = p - 1;
+  for (int j = p; j < r; ++j) {
+    if (a[j] <= x) {
+      ++i;
+      swap(a[i], a[j]);
+    }
+  }
+  swap(a[i + 1], a[r]);
+  return i + 1;
+}
+void QuickSort(int a[], int p, int r) {
+  if (p < r) {
+    int q = Partition(a, p, r);
+    QuickSort(a, p, q - 1);
+    QuickSort(a, q + 1, r);
+  }
+}
+
+// 5. S?p x?p tr?n (Merge Sort)
+void Merge(int a[], int p, int q, int r) {
+  int n1 = q - p + 1;
+  int n2 = r - q;
+  int L[n1], R[n2];
+  for (int i = 0; i < n1; ++i) {
+    L[i] = a[p + i];
+  }
+  for (int j = 0; j < n2; ++j) {
+    R[j] = a[q + j + 1];
+  }
+  int i = 0, j = 0, k = p;
+  while (i < n1 && j < n2) {
+    if (L[i] <= R[j]) {
+      a[k] = L[i];
+      ++i;
+    } else {
+      a[k] = R[j];
+      ++j;
+    }
+    ++k;
+  }
+  while (i < n1) {
+    a[k] = L[i];
+    ++i;
+    ++k;
+  }
+  while (j < n2) {
+    a[k] = R[j];
+    ++j;
+    ++k;
+  }
+}
+void MergeSort(int a[], int p, int r) {
+  if (p < r) {
+    int q = (p + r) / 2;
+    MergeSort(a, p, q);
+    MergeSort(a, q + 1, r);
+    Merge(a, p, q, r);
+  }
+}
+
+// 6. S?p x?p vun d?ng (Heap Sort)
+void Heapify(int a[], int n, int i) {
+  int largest = i;
+  int l = 2 * i + 1;
+  int r = 2 * i + 2;
+  if (l < n && a[l] > a[largest]) {
+    largest = l;
+  }
+  if (r < n && a[r] > a[largest]) {
+    largest = r;
+  }
+  if (largest != i) {
+    swap(a[i], a[largest]);
+    Heapify(a, n, largest);
+  }
+}
+void HeapSort(int a[], int n) {
+  for (int i = n / 2 - 1; i >= 0; --i) {
+    Heapify(a, n, i);
+  }
+  for (int i = n - 1; i >= 0; --i) {
+    swap(a, &a[i]); // S?a l?i: Hoán d?i a v?i a[i]
+    Heapify(a, i, 0);
+  }
+}
+
+
+
+// Hàm nh?p m?ng
+void NhapMang(int a[], int &n) {
+  cout << "Nhap so luong phan tu: ";
+  cin >> n;
+  cout << "Nhap cac phan tu cua mang:\n";
+  for (int i = 0; i < n; ++i) {
+    cout << "a[" << i << "] = ";
+    cin >> a[i];
+  }
+}
+
+// Hàm xu?t m?ng
+void XuatMang(int a[], int n) {
+  cout << "Cac phan tu cua mang:\n";
+  for (int i = 0; i < n; ++i) {
+    cout << a[i] << " ";
+  }
+  cout << endl;
+}
+
+// Hàm hi?n th? menu
+void Menu() {
+  cout << "\n===== MENU =====" << endl;
+  cout << "1. Nhap danh sach" << endl;
+  cout << "2. Xem danh sach" << endl;
+  cout << "3. Sap xep tang dan bang SELECTION Sort" << endl;
+  cout << "4. Sap xep tang dan bang BUBBLE Sort" << endl;
+  cout << "5. Sap xep tang dan bang INSERTION Sort" << endl;
+  cout << "6. Sap xep tang dan bang QUICK Sort" << endl;
+  cout << "7. Sap xep tang dan bang HEAP Sort" << endl;
+  cout << "8. Sap xep tang dan bang MERGE Sort" << endl;
+  cout << "z. Ket thuc" << endl;
+  cout << "================" << endl;
+  cout << "Hay nhan phim tu 1 -> z de chon: ";
+}
+
+int main() {
+  int n;
+  int a[MAX];
+  char chon;
+
+  do {
+    Menu();
+    cin >> chon;
+
+    switch (chon) {
+      case '1':
+        NhapMang(a, n);
+        break;
+      case '2':
+        XuatMang(a, n);
+        break;
+      case '3':
+        SelectionSort(a, n);
+        cout << "\nMang sau khi sap xep:\n";
+        XuatMang(a, n);
+        break;
+      case '4':
+        BubbleSort(a, n);
+        cout << "\nMang sau khi sap xep:\n";
+        XuatMang(a, n);
+        break;
+      case '5':
+        InsertionSort(a, n);
+        cout << "\nMang sau khi sap xep:\n";
+        XuatMang(a, n);
+        break;
+      case '6':
+        QuickSort(a, 0, n - 1);
+        cout << "\nMang sau khi sap xep:\n";
+        XuatMang(a, n);
+        break;
+      case '7':
+        HeapSort(a, n);
+        cout << "\nMang sau khi sap xep:\n";
+        XuatMang(a, n);
+        break;
+      case '8':
+        MergeSort(a, 0, n - 1);
+        cout << "\nMang sau khi sap xep:\n";
+        XuatMang(a, n);
+        break;
+      case 'z':
+        cout << "\nKet thuc chuong trinh\n";
+        break;
+      default:
+        cout << "\nLua chon khong hop le. Vui long chon lai.\n";
+    }
+  } while (chon != 'z');
+
+  return 0;
+}
